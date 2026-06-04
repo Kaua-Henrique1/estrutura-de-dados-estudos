@@ -105,5 +105,3 @@ Itens mínimos a entregar:
 - Artigos e posts sobre IntroSort e análise de QuickSort/HeapSort.
 
 ---
-
-Se quiser, eu posso: gerar um esqueleto de projeto (pastas e arquivos iniciais), criar um script de benchmark em Python pronto para executar (com coleta de métricas) e implementar versões básicas de Bogo Sort e IntroSort em Python. Diga qual desses passos você prefere que eu faça agora.
