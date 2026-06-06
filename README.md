@@ -93,11 +93,10 @@ Itens mínimos a entregar:
   - bogo/
   - introsort/
 - experiments/
-  - run.py
+  - run.java
 - results/
 - docs/
-  - relatório.pdf
-  - slides.pdf
+  - relatório.md
 
 ## Referências e leituras recomendadas
 
