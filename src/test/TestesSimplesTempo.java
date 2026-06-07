@@ -10,7 +10,7 @@ public class TestesSimplesTempo {
     }
 
     public static void main(String[] args) {
-        int n = 1000; // Altere este valor para 10000, 100000, etc., para gerar seu gráfico
+        int n = 100000; // Altere este valor para 10000, 100000, etc., para gerar seu gráfico
         long inicio, fim;
         Random numero = new Random();
 

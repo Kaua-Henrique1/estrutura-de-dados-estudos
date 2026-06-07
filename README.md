@@ -104,3 +104,14 @@ Itens mínimos a entregar:
 - Artigos e posts sobre IntroSort e análise de QuickSort/HeapSort.
 
 ---
+
+## Como compilar o Projeto:
+```bash
+cd /home/jaua/Documents/dev/estrutura-de-dados-estudos/estrutura-de-dados-estudos
+mvn -DskipTests compile```
+```
+
+## Como rodar Projeto:
+```bash
+java -cp target/classes:target/test-classes TestesSimplesTempo
+```
