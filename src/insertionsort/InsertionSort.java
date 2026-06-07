@@ -1,3 +1,5 @@
+package insertionsort;
+
 // Small utility class that provides insertion sort.
 // The file previously contained only a free-standing method which caused
 // "class, interface, or enum expected" compilation errors. Wrap it in a class.

@@ -1,11 +1,45 @@
 # Análise Comparativa: IntroSort e seus Pares Algorítmicos
 
-## 1. Introdução
+# 1. Introdução
+## Visão Geral e Características do IntroSort
+### 1. Origem e Contexto Histórico
+* **Quando foi criado:** Em 1997.
+* **Por quem:** Desenvolvido pelo cientista da computação **David Musser**.
+* **Motivo da criação:** Surgiu com o propósito de fornecer algoritmos genéricos e robustos para a **Biblioteca Padrão do C++** (STL). O objetivo era atender a requisitos de desempenho extremamente rigorosos e previsíveis, eliminando os gargalos dos algoritmos tradicionais da época.
 
-Proposto por **David Musser em 1997**, o **IntroSort** (*Introspective Sort*) surgiu para solucionar uma limitação histórica na engenharia de software: os principais algoritmos de ordenação da época possuíam vulnerabilidades críticas individuais.
+---
 
-> O IntroSort resolve esse problema através de uma **estratégia híbrida de três fases**, que monitora o estado da recursão e o tamanho dos dados em tempo real para acionar a sub-rotina ideal:
+## 2. Foco e Proposta do Algoritmo
+O IntroSort é um algoritmo **híbrido por comparação** projetado para extrair o melhor de três mundos: o desempenho prático veloz do *QuickSort*, a blindagem contra o pior caso do *HeapSort* e a eficiência mecânica do *Insertion Sort*.
 
+* **Complexidade no Pior Caso:** $O(n \log n)$ — Garantido pelo HeapSort.
+* **Complexidade Média:** $O(n \log n)$ — Mantido pelo QuickSort.
+* **Otimização:** Sim, o algoritmo é considerado ótimo por não degradar para $O(n^2)$ em nenhuma entrada de dados.
+
+---
+
+## 3. Como é Utilizado Hoje em Dia
+Por conta de sua alta resiliência e velocidade, o IntroSort tornou-se o padrão da indústria para ordenação de propósito geral. Ele é a fundação do método `std::sort` na biblioteca padrão do C++ (como a `libstdc++` do GCC), protegendo sistemas comerciais e servidores contra trechos de dados maliciosos que tentam forçar o pior cenário de execução.
+
+---
+
+## 4. Explicação de Conceitos Técnicos Críticos
+
+Para compreender o comportamento do IntroSort na memória, é necessário entender duas propriedades fundamentais que ele possui:
+
+### A. O que é um Algoritmo In-Place?
+Um algoritmo é considerado **in-place** (ou *em linha/no local*) quando ele reorganiza os elementos **dentro do próprio vetor original**, utilizando uma quantidade mínima e constante de memória extra apenas para variáveis auxiliares.
+
+> **Na prática:** O IntroSort não precisa duplicar o array ou criar grandes estruturas na memória RAM para fazer a ordenação (ao contrário do *MergeSort*, que exige um vetor temporário do mesmo tamanho do original). O espaço extra que ele consome é restrito à pilha de chamadas da recursão ($O(\log n)$).
+
+### B. O que é um Algoritmo Não Estável?
+A **estabilidade** diz respeito à preservação da ordem original de elementos que possuem chaves com valores idênticos. Como o IntroSort é **não estável** (ou instável), ele **não garante** que essa ordem será mantida.
+
+> **Exemplo Prático:** Imagine que você tem uma lista de alunos ordenada por ordem alfabética e decide reordená-los pela nota do trabalho usando o IntroSort:
+> * Se o Aluno A e o Aluno B tiraram a mesma nota `7.0`, o algoritmo pode inverter a posição deles durante as trocas físicas (*swaps*) do QuickSort ou HeapSort.
+> * Ao final da ordenação, o Aluno B pode aparecer antes do Aluno A na lista, quebrando a ordem alfabética secundária que existia antes.troSort resolve esse problema através de uma **estratégia híbrida de três fases**, que monitora o estado da recursão e o tamanho dos dados em tempo real para acionar a sub-rotina ideal:
+---
+## FUNCIONAMENTO DO INTRO SORT
 ```
                [ Array de Entrada ]
                        │
@@ -77,8 +111,8 @@ O IntroSort consolida-se não apenas como uma evolução teórica, mas como uma 
 
 ## 5. Referências e Fontes
 
-* **QUINTILIANO, André.** *Ordenação de Dados - HeapSort*. Disponível em material didático/videoaula de apoio à disciplina.
-* **SAS DO BIG SAS.** *Método de ordenação Introsort*. Disponível em material audiovisual de apoio à disciplina.
-* **NAPOLEÃO JR., Prof. Rogério.** *RESOLVENDO LEETCODE - 643. Maximum Average Subarray I - DESAFIO LEETCODE 75 - JAVA*. Disponível em canal de conteúdo educacional.
+* **QUINTILIANO, André.** *Ordenação de Dados - HeapSort*. Disponível em material didático/videoaula no Youtube.
+* **INTROSORT.** In: WIKIPEDIA, a enciclopédia livre. Flórida: Wikimedia Foundation, 2026. Disponível em: <https://en.wikipedia.org/wiki/Introsort>. Acesso em: 2026.
+* **SAS DO BIG SAS.** *Método de ordenação Introsort*. Disponível no Youtube.
+* **NAPOLEÃO JR., Prof. Rogério.** *RESOLVENDO LEETCODE - 643. Maximum Average Subarray I - DESAFIO LEETCODE 75 - JAVA*. Disponível no Youtube.
 * **RODRIGUES, Givanaldo.** *Repositório da Disciplina: Estruturas de Dados (2026)*. Disponível em: <https://github.com/givanaldo/estruturasdedados-2026>. Acesso em: 2026.
-* **CORMEN, Thomas H. et al.** *Introduction to Algorithms*. 4. ed. MIT Press, 2022. (Referência teórica complementar para análise assintótica e algoritmos base).

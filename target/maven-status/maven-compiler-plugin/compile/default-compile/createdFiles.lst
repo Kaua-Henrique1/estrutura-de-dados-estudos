@@ -1,5 +1,6 @@
-InsertionSort.class
-Sort.class
+insertionsort/InsertionSort.class
 TestesSimplesTempo.class
+bogosort/BogoSort.class
+quicksort/QuickSort.class
+mergesort/MergeSort.class
 introsort/IntroSort.class
-QuickSort.class

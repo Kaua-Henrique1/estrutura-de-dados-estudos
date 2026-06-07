@@ -1,5 +1,9 @@
 import java.util.Random;
-import introsort.IntroSort; // Importa a classe que criamos acima
+import introsort.IntroSort;
+import quicksort.QuickSort;
+import mergesort.MergeSort;
+import insertionsort.InsertionSort;
+import bogosort.BogoSort;
 
 public class TestesSimplesTempo {
     public static void imprimirVetor(String texto, int [] v) {
@@ -10,35 +14,48 @@ public class TestesSimplesTempo {
     }
 
     public static void main(String[] args) {
-        int n = 100000; // Altere este valor para 10000, 100000, etc., para gerar seu gráfico
+        int n = 100000;
         long inicio, fim;
         Random numero = new Random();
 
         int[] vetor1 = new int[n];
-        for (int i = 0; i < vetor1.length; i++)
+        for (int i = 0; i < vetor1.length; i++) {
             vetor1[i] = numero.nextInt(10000);
+        }
 
-        // Clones para garantir que todos testem exatamente o mesmo vetor desordenado
-        int[] vetor6 = vetor1.clone(); // Para o Mergesort original
-        int[] vetor7 = vetor1.clone(); // Para o Quicksort original
+        int[] vetor6 = vetor1.clone(); // Para o MergeSort
+        int[] vetor7 = vetor1.clone(); // Para o QuickSort
         int[] vetor8 = vetor1.clone(); // NOVO: Reservado para o IntroSort
 
-        // --- Teste do Mergesort original ---
+        System.out.println("Vetor para ser ordenado de "+vetor1.length);
+        // --- Teste do MergeSort ---
         inicio = System.currentTimeMillis();
-        Sort.mergesort(vetor6);
+        MergeSort.mergesort(vetor6);
         fim = System.currentTimeMillis();
-        System.out.println("Mergesort: " + (fim - inicio) + " milisegundos");
+        System.out.println("MergeSort: " + (fim - inicio) + " milisegundos");
 
-        // --- Teste do Quicksort original ---
+        // --- Teste do Quicksort ---
         inicio = System.currentTimeMillis();
-        Sort.quicksort(vetor7);
+        QuickSort.quicksort(vetor7);
         fim = System.currentTimeMillis();
         System.out.println("Quicksort: " + (fim - inicio) + " milisegundos");
 
-        // --- NOVO: Teste do IntroSort ---
+        // --- Teste do IntroSort ---
         inicio = System.currentTimeMillis();
         IntroSort.sort(vetor8); // Chama o método estático simplificado
         fim = System.currentTimeMillis();
         System.out.println("IntroSort: " + (fim - inicio) + " milisegundos");
+
+        // --- Teste do BogoSort (apenas com 10 números, pois é muito lento) ---
+        int[] vetorBogo = new int[10];
+        Random numeroBogo = new Random();
+        for (int i = 0; i < vetorBogo.length; i++) {
+            vetorBogo[i] = numeroBogo.nextInt(100);
+        }
+
+        inicio = System.currentTimeMillis();
+        BogoSort.sort(vetorBogo);
+        fim = System.currentTimeMillis();
+        System.out.println("BogoSort (10 elementos): " + (fim - inicio) + " milisegundos");
     }
 }

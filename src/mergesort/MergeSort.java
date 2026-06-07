@@ -1,11 +1,6 @@
-/* Utility Sort facade used by the test harness.
-   Provides mergesort and quicksort static methods so existing tests that
-   call Sort.mergesort(...) and Sort.quicksort(...) continue to work.
-   mergesort is implemented here; quicksort delegates to the QuickSort class
-   (which exists in the project).
-*/
-public class Sort {
-    // Public mergesort API
+package mergesort;
+
+public class MergeSort {
     public static void mergesort(int[] v) {
         if (v == null || v.length <= 1) return;
         int[] aux = new int[v.length];
@@ -29,12 +24,6 @@ public class Sort {
         while (i <= mid) aux[k++] = a[i++];
         while (j <= right) aux[k++] = a[j++];
         for (k = left; k <= right; k++) a[k] = aux[k];
-    }
-
-    // Public quicksort API that delegates to existing QuickSort implementation
-    public static void quicksort(int[] v) {
-        if (v == null || v.length <= 1) return;
-        QuickSort.quicksort(v);
     }
 }
 
