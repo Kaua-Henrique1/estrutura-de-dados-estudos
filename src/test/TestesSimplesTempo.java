@@ -2,7 +2,6 @@ import java.util.Random;
 import introsort.IntroSort;
 import quicksort.QuickSort;
 import mergesort.MergeSort;
-import insertionsort.InsertionSort;
 import bogosort.BogoSort;
 
 public class TestesSimplesTempo {
@@ -14,7 +13,7 @@ public class TestesSimplesTempo {
     }
 
     public static void main(String[] args) {
-        int n = 100000;
+        int n = 10;
         long inicio, fim;
         Random numero = new Random();
 
@@ -47,6 +46,7 @@ public class TestesSimplesTempo {
         System.out.println("IntroSort: " + (fim - inicio) + " milisegundos");
 
         // --- Teste do BogoSort (apenas com 10 números, pois é muito lento) ---
+
         int[] vetorBogo = new int[10];
         Random numeroBogo = new Random();
         for (int i = 0; i < vetorBogo.length; i++) {
