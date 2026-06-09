@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Anatomia do IntroSort</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+            margin: 0;
+            color: #1f2937;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+        }
+        h2 { margin-top: 0; color: #111827; }
+        
+        #bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 220px;
+            margin: 20px 0;
+            gap: 6px;
+        }
+        .bar {
+            width: 35px;
+            background-color: #3b82f6; 
+            color: white;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.1s, background-color 0.1s;
+        }
+        
+        /* Cores de Estado */
+        .bar.compare { background-color: #f59e0b !important; } /* Amarelo */
+        .bar.swap { background-color: #ef4444 !important; }    /* Vermelho */
+        .bar.pivot { background-color: #8b5cf6 !important; }   /* Roxo */
+        .bar.sorted { background-color: #10b981 !important; }  /* Verde */
+        
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        button {
+            border: none;
+            padding: 12px 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            color: white;
+        }
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #d1d5db !important; color: #9ca3af; cursor: not-allowed; }
+        
+        .btn-quick { background-color: #8b5cf6; }
+        .btn-heap { background-color: #f59e0b; color: #fff; }
+        .btn-insert { background-color: #ef4444; }
+        .btn-intro { 
+            background-color: #2563eb; 
+            grid-column: span 3; 
+            padding: 16px; 
+            font-size: 1.1rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        #fase {
+            margin-top: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #374151;
+            min-height: 28px;
+            background: #f3f4f6;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        .legend span { display: flex; align-items: center; gap: 5px; color: #4b5563;}
+        .color-box { width: 14px; height: 14px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>A Anatomia do IntroSort</h2>
+        <p style="margin: 0 0 15px 0; font-size: 0.95rem; color: #6b7280;">
+            Escolha um algoritmo para rodar isoladamente ou ligue o "Modo Híbrido" (IntroSort).
+        </p>
+        
+        <div id="fase">Aguardando comando...</div>
+        
+        <div id="bars"></div>
+        
+        <div class="buttons-grid">
+            <button class="btn-quick" id="btn-quick" onclick="startViz('quick')">1. QuickSort (Partição)</button>
+            <button class="btn-heap" id="btn-heap" onclick="startViz('heap')">2. HeapSort (Segurança)</button>
+            <button class="btn-insert" id="btn-insert" onclick="startViz('insertion')">3. Insertion (Polimento)</button>
+            <button class="btn-intro" id="btn-intro" onclick="startViz('intro')">4. Executar IntroSort (Modo Híbrido)</button>
+        </div>
+        
+        <div class="legend">
+            <span><div class="color-box" style="background: #3b82f6;"></div> Normal</span>
+            <span><div class="color-box" style="background: #8b5cf6;"></div> Pivô</span>
+            <span><div class="color-box" style="background: #f59e0b;"></div> Lendo/Comparando</span>
+            <span><div class="color-box" style="background: #ef4444;"></div> Trocando (Swap)</span>
+            <span><div class="color-box" style="background: #10b981;"></div> Ordenado</span>
+        </div>
+    </div>
+
+    <script>
+        // Vetor padrão (desordenado) projetado para exibir bem as diferentes fases
+        const vetorOriginal = [25, 12, 18, 5, 9, 21, 3, 14, 2, 8, 11, 15, 4, 19, 6];
+        let vetorAtual = [...vetorOriginal];
+        let tempArr = [];
+        let sortedIndices = [];
+        let actions = [];
+        let animationId = null;
+        let isPlaying = false;
+        let animationIndex = 0;
+
+        const divBars = document.getElementById('bars');
+        const faseText = document.getElementById('fase');
+
+        // Função responsável por desenhar e pintar as barras no ecrã
+        function desenharBarras(arr, highlights = [], highlightClass = '', sortedArr = []) {
+            divBars.innerHTML = '';
+            arr.forEach((valor, i) => {
+                const bar = document.createElement('div');
+                let baseClass = 'bar';
+                if (sortedArr.includes(i)) baseClass += ' sorted';
+                if (highlights.includes(i)) baseClass += ' ' + highlightClass;
+                
+                bar.className = baseClass;
+                bar.style.height = (valor * 8) + 'px'; // Multiplicador visual
+                bar.innerText = valor;
+                divBars.appendChild(bar);
+            });
+        }
+
+        // ==========================================
+        // MÁQUINA DE GRAVAÇÃO DOS ESTADOS
+        // ==========================================
+        function recordPhase(text) { actions.push({ type: 'phase', text: text, arr: [...tempArr], sorted: [...sortedIndices] }); }
+        function recordCompare(i, j) { actions.push({ type: 'compare', i: i, j: j, arr: [...tempArr], sorted: [...sortedIndices] }); }
+        function recordPivot(i) { actions.push({ type: 'pivot', i: i, arr: [...tempArr], sorted: [...sortedIndices] }); }
+        function recordSwap(i, j) {
+            let t = tempArr[i]; tempArr[i] = tempArr[j]; tempArr[j] = t;
+            actions.push({ type: 'swap', i: i, j: j, arr: [...tempArr], sorted: [...sortedIndices] });
+        }
+        function recordOverwrite(index, val) {
+            tempArr[index] = val;
+            actions.push({ type: 'swap', i: index, j: index, arr: [...tempArr], sorted: [...sortedIndices] });
+        }
+        function recordSorted(index) {
+            if (!sortedIndices.includes(index)) sortedIndices.push(index);
+            actions.push({ type: 'sorted', index: index, arr: [...tempArr], sorted: [...sortedIndices] });
+        }
+
+        // ==========================================
+        // ALGORITMOS ISOLADOS
+        // ==========================================
+
+        // 1. QUICK SORT
+        function doQuick(lo, hi) {
+            if (lo > hi) return;
+            if (lo === hi) { recordSorted(lo); return; }
+            let p = partition(lo, hi);
+            recordSorted(p);
+            doQuick(lo, p - 1);
+            doQuick(p + 1, hi);
+        }
+
+        function partition(lo, hi) {
+            let pivot = tempArr[hi];
+            recordPivot(hi);
+            let i = lo - 1;
+            for (let j = lo; j < hi; j++) {
+                recordCompare(j, hi);
+                if (tempArr[j] <= pivot) {
+                    i++;
+                    if (i !== j) recordSwap(i, j);
+                }
+            }
+            recordSwap(i + 1, hi);
+            return i + 1;
+        }
+
+        // 2. HEAP SORT
+        function doHeap(lo, hi) {
+            let n = hi - lo + 1;
+            recordPhase("HeapSort: Transformando em Árvore (Max-Heap)...");
+            for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                siftDown(i, n - 1, lo);
+            }
+            recordPhase("HeapSort: Extraindo os maiores para o final...");
+            for (let i = n - 1; i > 0; i--) {
+                recordSwap(lo, lo + i);
+                recordSorted(lo + i);
+                siftDown(0, i - 1, lo);
+            }
+            recordSorted(lo);
+        }
+
+        function siftDown(root, end, lo) {
+            while (true) {
+                let largest = root;
+                let left = 2 * root + 1;
+                let right = 2 * root + 2;
+
+                if (left <= end) {
+                    recordCompare(lo + left, lo + largest);
+                    if (tempArr[lo + left] > tempArr[lo + largest]) largest = left;
+                }
+                if (right <= end) {
+                    recordCompare(lo + right, lo + largest);
+                    if (tempArr[lo + right] > tempArr[lo + largest]) largest = right;
+                }
+                if (largest === root) break;
+
+                recordSwap(lo + root, lo + largest);
+                root = largest;
+            }
+        }
+
+        // 3. INSERTION SORT
+        function doInsertion(lo, hi) {
+            for (let i = lo + 1; i <= hi; i++) {
+                let key = tempArr[i];
+                let j = i - 1;
+                while (j >= lo) {
+                    recordCompare(j, j + 1); 
+                    if (tempArr[j] > key) {
+                        recordOverwrite(j + 1, tempArr[j]);
+                        j--;
+                    } else {
+                        break;
+                    }
+                }
+                recordOverwrite(j + 1, key);
+            }
+            for(let i = lo; i <= hi; i++) recordSorted(i);
+        }
+
+        // 4. INTRO SORT (O Híbrido)
+        function doIntro(lo, hi, depthLimit) {
+            if (lo > hi) return;
+            if (lo === hi) { recordSorted(lo); return; }
+
+            // Condição 1: Pedaço minúsculo vai para Insertion Sort
+            if (hi - lo + 1 <= 3) {
+                recordPhase(`IntroSort ativou: INSERTION SORT (Tamanho ≤ 3)`);
+                doInsertion(lo, hi);
+            } 
+            // Condição 2: Risco de loop demorado vai para Heap Sort
+            else if (depthLimit === 0) {
+                recordPhase(`IntroSort ativou: HEAPSORT (Risco de Pior Caso evitado)`);
+                doHeap(lo, hi);
+            } 
+            // Padrão: Quick Sort
+            else {
+                recordPhase(`IntroSort usando: QUICKSORT (Profundidade atual: ${depthLimit})`);
+                let p = partition(lo, hi);
+                recordSorted(p);
+                doIntro(lo, p - 1, depthLimit - 1);
+                doIntro(p + 1, hi, depthLimit - 1);
+            }
+        }
+
+        // ==========================================
+        // MOTOR DE ANIMAÇÃO NO ECRÃ
+        // ==========================================
+        function enableButtons(enabled) {
+            document.querySelectorAll('button').forEach(btn => btn.disabled = !enabled);
+        }
+
+        function playAnimation() {
+            if (animationIndex >= actions.length) {
+                isPlaying = false;
+                enableButtons(true);
+                return;
+            }
+
+            let acao = actions[animationIndex];
+            let delay = 100;
+
+            if (acao.type === 'phase') {
+                faseText.innerText = acao.text;
+                faseText.style.color = "#2563eb";
+                desenharBarras(acao.arr, [], '', acao.sorted);
+                delay = 1200; // Tempo de pausa para ler a mudança
+            } else if (acao.type === 'compare') {
+                desenharBarras(acao.arr, [acao.i, acao.j], 'compare', acao.sorted);
+                delay = 60;
+            } else if (acao.type === 'swap') {
+                desenharBarras(acao.arr, [acao.i, acao.j], 'swap', acao.sorted);
+                delay = 120;
+            } else if (acao.type === 'pivot') {
+                desenharBarras(acao.arr, [acao.i], 'pivot', acao.sorted);
+                delay = 300;
+            } else if (acao.type === 'sorted') {
+                desenharBarras(acao.arr, [], '', acao.sorted);
+                delay = 40;
+            }
+
+            animationIndex++;
+            animationId = setTimeout(playAnimation, delay);
+        }
+
+        function startViz(type) {
+            if (isPlaying) clearTimeout(animationId);
+            isPlaying = true;
+            animationIndex = 0;
+            tempArr = [...vetorOriginal];
+            sortedIndices = [];
+            actions = [];
+            enableButtons(false);
+            faseText.style.color = "#374151";
+
+            // Escolhe o algoritmo baseado no botão clicado
+            if(type === 'quick') {
+                faseText.innerText = "Executando Apenas: QuickSort (O Motor)";
+                doQuick(0, tempArr.length - 1);
+            } else if (type === 'heap') {
+                faseText.innerText = "Executando Apenas: HeapSort (A Válvula de Segurança)";
+                doHeap(0, tempArr.length - 1);
+            } else if (type === 'insertion') {
+                faseText.innerText = "Executando Apenas: InsertionSort (O Polimento)";
+                doInsertion(0, tempArr.length - 1);
+            } else if (type === 'intro') {
+                faseText.innerText = "Iniciando MODO HÍBRIDO (IntroSort)...";
+                doIntro(0, tempArr.length - 1, 2); // depthLimit pedagógico travado no 2
+            }
+
+            // Mensagem de conclusão
+            actions.push({ 
+                type: 'phase', 
+                text: 'Ordenação 100% Concluída!', 
+                arr: [...tempArr], 
+                sorted: Array.from({length: tempArr.length}, (_, i) => i) 
+            });
+
+            playAnimation();
+        }
+
+        // Desenha a tela quando o ficheiro HTML abre pela primeira vez
+        desenharBarras(vetorOriginal);
+    </script>
+</body>
+</html>
