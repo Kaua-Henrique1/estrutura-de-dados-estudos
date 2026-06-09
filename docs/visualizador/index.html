@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bogo Sort Visualizer</title>
+
+    <style>
+
+        body {
+
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            height: 100vh;
+
+            background-color: #f3f4f6;
+
+            margin: 0;
+
+            color: #1f2937;
+
+        }
+
+        .container {
+
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 12px;
+
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+            text-align: center;
+
+        }
+
+        #bars {
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: center;
+
+            height: 200px;
+
+            margin: 20px 0;
+
+            gap: 10px;
+
+        }
+
+        .bar {
+
+            width: 40px;
+
+            background-color: #3b82f6;
+
+            color: white;
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: center;
+
+            padding-bottom: 10px;
+
+            font-weight: bold;
+
+            font-size: 1.2rem;
+
+            border-radius: 4px 4px 0 0;
+
+            transition: height 0.1s;
+
+        }
+
+        .bar.sorted { background-color: #10b981; }
+
+        button {
+
+            background-color: #111827;
+
+            color: white;
+
+            border: none;
+
+            padding: 10px 20px;
+
+            font-size: 1rem;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            transition: background 0.2s;
+
+        }
+
+        button:hover { background-color: #374151; }
+
+        button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+
+        #status { margin-top: 15px; font-size: 1.1rem; }
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+    <div class="container">
+
+        <h2>Simulador do Caos: Bogo Sort</h2>
+
+        <div id="bars"></div>
+
+        <button id="startBtn" onclick="startBogoSort()">Começar a Bagunça</button>
+
+        <p id="status">Tentativas: 0</p>
+
+    </div>
+
+
+
+    <script>
+
+        // Vetor inicial de tamanho 5 (fora de ordem)
+
+        let vetor = [5, 2, 4, 1, 3];
+
+        let tentativas = 0;
+
+        let rodando = false;
+
+
+
+        const divBars = document.getElementById('bars');
+
+        const statusText = document.getElementById('status');
+
+        const startBtn = document.getElementById('startBtn');
+
+
+
+        // Desenha as barras na tela
+
+        function desenharBarras(ordenado = false) {
+
+            divBars.innerHTML = '';
+
+            vetor.forEach(valor => {
+
+                const bar = document.createElement('div');
+
+                bar.className = 'bar' + (ordenado ? ' sorted' : '');
+
+                bar.style.height = (valor * 30) + 'px';
+
+                bar.innerText = valor;
+
+                divBars.appendChild(bar);
+
+            });
+
+        }
+
+
+
+        // Verifica se o vetor está ordenado
+
+        function isSorted(arr) {
+
+            for (let i = 1; i < arr.length; i++) {
+
+                if (arr[i] < arr[i - 1]) return false;
+
+            }
+
+            return true;
+
+        }
+
+
+
+        // Embaralha o vetor aleatoriamente
+
+        function shuffle(arr) {
+
+            for (let i = 0; i < arr.length; i++) {
+
+                const randomIndex = Math.floor(Math.random() * arr.length);
+
+                const temp = arr[i];
+
+                arr[i] = arr[randomIndex];
+
+                arr[randomIndex] = temp;
+
+            }
+
+        }
+
+
+
+        // Loop do algoritmo usando setTimeout para não travar a tela
+
+        function loopBogo() {
+
+            if (isSorted(vetor)) {
+
+                desenharBarras(true);
+
+                statusText.innerText = `Ufa! Ordenado por pura sorte em ${tentativas} tentativas!`;
+
+                startBtn.disabled = false;
+
+                rodando = false;
+
+                return;
+
+            }
+
+
+
+            shuffle(vetor);
+
+            tentativas++;
+
+            statusText.innerText = `Tentativas: ${tentativas}`;
+
+            desenharBarras();
+
+
+
+            // Roda o próximo passo a cada 100 milissegundos
+
+            setTimeout(loopBogo, 100);
+
+        }
+
+
+
+        function startBogoSort() {
+
+            if (rodando) return;
+
+            rodando = true;
+
+            tentativas = 0;
+
+            startBtn.disabled = true;
+
+            statusText.innerText = 'Tentativas: 0';
+
+            
+
+            // Se já estiver ordenado, bagunça uma vez para forçar a busca
+
+            if (isSorted(vetor)) shuffle(vetor);
+
+            
+
+            loopBogo();
+
+        }
+
+
+
+        // Desenha a tela inicial
+
+        desenharBarras();
+
+    </script>
+
+</body>
+
+</html> 
+

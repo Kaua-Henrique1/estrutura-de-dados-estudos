@@ -7,7 +7,6 @@ Para demonstrar a mecânica caótica e ineficiente do Bogo Sort, simularemos a e
 **Configuração Inicial:**
 * **Vetor Original:** `[4, 2, 3, 1]`
 * **Tamanho ($N$):** 4
-* **Permutações Possíveis ($N!$):** $4! = 24$ combinações possíveis no espaço de busca.
 
 ---
 
