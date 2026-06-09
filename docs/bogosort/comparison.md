@@ -14,9 +14,9 @@
 ---
 ## 3. Matriz de Complexidade Assintótica
 
-| Algoritmo | Melhor Caso | Caso Médio | Pior Caso | Espaço Auxiliar | Estabilidade | In-Place |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Bogo Sort** | $O(n)$ | $O(n \cdot n!)$ | $O(\infty)$ | $O(1)$ | Instável | Sim |
+| Algoritmo | Melhor Caso | Caso Médio | Pior Caso |
+| :--- | :--- | :--- | :--- |
+| **Bogo Sort** | $O(n)$ | $O(n \cdot n!)$ | $O(\infty)$ |
 
 * **Melhor Caso $O(n)$:** Ocorre se o vetor já for entregue totalmente ordenado. Faz apenas uma verificação e para.
 * **Caso Médio $O(n \cdot n!)$:** A probabilidade de acertar na permutação correta por pura sorte exige um número gigantesco de tentativas, tornando-o inviável.
@@ -24,15 +24,7 @@
 
 ---
 
-## 4. Propriedades Técnicas do Algoritmo
-
-* **In-Place:** **Sim.** O algoritmo reorganiza os elementos dentro do próprio vetor original, utilizando uma quantidade mínima e constante de memória extra $O(1)$.
-* **Estabilidade:** **Não Estável.** O processo de embaralhamento rearranja as posições de forma totalmente aleatória, sem garantia de manter a ordem original de chaves idênticas.
-* **Adaptativo:** **Não.** O algoritmo não aprende com as iterações passadas nem tira partido de subvetores já ordenados.
-
----
-
-## 5. Limitações e Aplicações
+## 4. Limitações e Aplicações
 O Bogo Sort possui utilidade prática nula em sistemas comerciais. No entanto, é uma excelente ferramenta:
 * Para ilustrar graficamente o impacto catastrófico de uma complexidade fatorial nas aulas de Estruturas de Dados.
 * Para atuar como teste de estresse (*benchmark*) extremo em processadores.
@@ -75,7 +67,7 @@ public class BogoSort {
 ```
 ---
 
-## 6. Comparativo Empírico de Desempenho
+## 5. Comparativo Empírico de Desempenho
 
 Atendendo aos requisitos do trabalho, realizamos testes práticos comparando os dois algoritmos pesquisados (**IntroSort** e **BogoSort**) com dois algoritmos já vistos em sala de aula (**MergeSort** e **QuickSort**). 
 
