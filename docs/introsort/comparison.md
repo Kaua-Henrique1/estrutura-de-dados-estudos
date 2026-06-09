@@ -101,6 +101,21 @@ A tabela abaixo resume as diferenças de complexidade e propriedades entre o Int
 
 ## 4. Conclusão
 
+| Tamanho do Vetor ($N$) | MergeSort (ms) | QuickSort (ms) | IntroSort (ms) |
+| :--- | :---: | :---: | :---: |
+| *100* | 1 | 0 | 1 |
+| *10.000.000* | 1.959 | 986 | 1.400 |
+| *50.000.000* | 10.244 | 4.774 | 6.606 |
+| *80.000.000* | 17.420 | 7.987 | 12.081 |
+| *100.000.000* | 21.172 | 10.025 | 17.816 |
+| *150.000.000* | 35.370 | 15.290 | 26.100 |
+
+### Análise dos Resultados
+
+Explicando o porquê de o **QuickSort** ser mais rápido que o **HeapSort** (e consequentemente que o IntroSort) na prática, mesmo ambos compartilhando da complexidade teórica $O(n \log n)$ no caso médio:
+
+* **O Custo da Introspecção:** Observando os dados, nota-se que o *IntroSort* fica ligeiramente mais lento que o QuickSort puro. Essa diferença representa o custo de processamento do seu **mecanismo de salvaguarda**. Enquanto o QuickSort roda de "olhos fechados", o IntroSort gasta ciclos extras de CPU a cada chamada recursiva para checar se o `depthLimit` (limite de profundidade) foi atingido.
+* **Dados Aleatórios vs. Caso Médio:** Em um conjunto de dados perfeitamente aleatórios (como o adotado neste teste), o QuickSort raramente escolhe pivôs ruins. Por consequência, o IntroSort **nunca precisa acionar o seu "Plano B" (HeapSort)**, fazendo com que essas verificações constantes funcionem apenas como um pequeno atraso de conferência.
 O IntroSort consolida-se não apenas como uma evolução teórica, mas como uma **solução de engenharia de software aplicada**. Em vez de competir com os algoritmos clássicos, ele os integra de forma orquestrada, extraindo o potencial máximo de cada um em suas respectivas zonas de excelência:
 
 * Do **QuickSort**, absorve-se a velocidade do caso médio e a eficiência de cache;
