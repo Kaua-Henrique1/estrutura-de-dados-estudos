@@ -93,6 +93,7 @@ A tabela abaixo resume as diferenças de complexidade e propriedades entre o Int
 | *100.000.000* | 21.172 | 10.025 | 17.816 |
 | *150.000.000* | 35.370 | 15.290 | 26.100 |
 
+![Grafico](../image/gráfico-comparativo-introSort.png)
 ### Análise dos Resultados
 
 Explicando o porquê de o **QuickSort** ser mais rápido que o **HeapSort** (e consequentemente que o IntroSort) na prática, mesmo ambos compartilhando da complexidade teórica $O(n \log n)$ no caso médio:
